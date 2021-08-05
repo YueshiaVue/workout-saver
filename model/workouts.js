@@ -1,4 +1,19 @@
 const mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost/workout', {
+  useNewUrlParser: true,
+  useFindAndModify: false,
+  useUnifiedTopology: true,
+})
+.then(x => {
+  console.log(
+      `Connected to Mongo! Database name: "${x.connections[0].name}"`,
+  );
+})
+.catch(err => {
+  console.error('Error connecting to mongo', err);
+});
+
+;
 const Schema = mongoose.Schema;
 
 const workoutsSchema = new Schema({
@@ -38,6 +53,6 @@ const workoutsSchema = new Schema({
   ],
 });
 
-const Workouts = mongoose.model('Workouts', workoutsSchema);
+const Workouts = mongoose.model('workout', workoutsSchema);
 
 module.exports = Workouts;
