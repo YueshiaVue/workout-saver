@@ -51,28 +51,59 @@ router.get('/api/stats', async (req, res) => {
     res.send(statsData);
 })
 
-router.post('/api/workouts', async (req, res) => {
-    //add workout
-    let data = req.body;
-    let id = req.params.id;
-    console.log('data add ***',data);
-    console.log('id *****', id)
-    if (id !== 'undefined') {
-        let recentWorkout = Workouts.findById(id);
-        recentWorkout.exercises = [...recentWorkout.exercises,data];
-        if( Object.keys(data).length !== 0 && data.constructor === Object) {
-            console.log(data);
-            // let addData = await Workouts.insertMany([data]);
-            let data = await Workouts.findByIdAndUpdate(id,updateData)
-            console.log('addDATA ***',addData);
-            // res.send(addData);
-        }
-    }
-})
+router.post('/api/workouts', ({body}, res) => {
+    Workouts.create({ })
+      .then((dbWorkout) => {
+          console.log('line 57: dbworking *****',dbWorkout);
+        res.json(dbWorkout);
+      })
+      .catch((err) => {
+        res.json(err);
+      });
+  });
+// router.post('/api/workouts', async (req, res) => {
+//     //add workout
+//     let data = req.body;
+//     let id = req.params.id;
+//     console.log('data add ***',data);
+//     console.log('id *****', id)
+//     if (id !== 'undefined') {
+//         let recentWorkout = Workouts.findById(id);
+//         recentWorkout.exercises = [...recentWorkout.exercises,data];
+//         if( Object.keys(data).length !== 0 && data.constructor === Object) {
+//             console.log(data);
+//             // let addData = await Workouts.insertMany([data]);
+//             let data = await Workouts.findByIdAndUpdate(id,updateData)
+//             console.log('addDATA ***',addData);
+//             // res.send(addData);
+//         }
+//     }
+// })
 
-router.get('/api/workouts/range', async (req, res) => {
-    //get workout
-})
+// router.get('/api/workouts/range', async (req, res) => {
+//     //get workout
+// })
+
+router.get('/api/workouts/range', (req, res) => {
+    Workouts.aggregate([
+      {
+        $addFields: {
+          totalDuration: {
+            $sum: '$exercises.duration',
+          },
+        },
+      },
+    ])
+      .sort({ _id: -1 })
+      .limit(7)
+      .then((dbWorkout) => {
+        console.log(dbWorkout);
+        res.json(dbWorkout);
+      })
+      .catch((err) => {
+        res.json(err);
+      });
+  });
 
 
 module.exports = router;
