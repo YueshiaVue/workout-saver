@@ -11,7 +11,7 @@ app.use(express.static('public'));
 app.use(require('./routes/api.js'));
 app.use(require('./routes/index.js'))
 
-
+.listen(process.env.PORT || 3000)
 app.listen(PORT, () => {
     console.log('Now listening');
 });
